@@ -29,9 +29,9 @@
         "blake",
         "shavite",
         "fugue",
-    "sha1",
-    "whirlpoolx",
-    "lyra2re",
-    "zr5"
+        "sha1",
+        "whirlpoolx",
+        "lyra2re",
+        "zr5"
     ]
 }
