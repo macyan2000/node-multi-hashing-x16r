@@ -25,7 +25,7 @@ extern "C" {
     #include "nist5.h"
     #include "sha1.h"
     #include "x15.h"
-	  #include "fresh.h"
+    #include "fresh.h"
     #include "Lyra2RE.h"
 }
 
@@ -601,6 +601,50 @@ void fresh(const FunctionCallbackInfo<Value>& args) {
     args.GetReturnValue().Set(buff);
 }
 
+void lyra2re(const FunctionCallbackInfo<Value>& args) {
+     Isolate* isolate = Isolate::GetCurrent();HandleScope scope(isolate);
+
+    if (args.Length() < 1)
+        return except("You must provide one argument.");
+
+    Local<Object> target = args[0]->ToObject();
+
+    if(!Buffer::HasInstance(target))
+        return except("Argument should be a buffer object.");
+
+    char * input = Buffer::Data(target);
+    char* output = new char[32];
+
+    uint32_t input_len = Buffer::Length(target);
+
+    lyra2re_hash(input, output);
+
+    Local<Object> buff = Nan::NewBuffer(output, 32).ToLocalChecked();
+    args.GetReturnValue().Set(buff);
+}
+
+void lyra2re2(const FunctionCallbackInfo<Value>& args) {
+     Isolate* isolate = Isolate::GetCurrent();HandleScope scope(isolate);
+
+    if (args.Length() < 1)
+        return except("You must provide one argument.");
+
+    Local<Object> target = args[0]->ToObject();
+
+    if(!Buffer::HasInstance(target))
+        return except("Argument should be a buffer object.");
+
+    char * input = Buffer::Data(target);
+    char* output = new char[32];
+
+    uint32_t input_len = Buffer::Length(target);
+
+    lyra2re2_hash(input, output);
+
+    Local<Object> buff = Nan::NewBuffer(output, 32).ToLocalChecked();
+    args.GetReturnValue().Set(buff);
+}
+
 void init(Handle<Object> exports) {
     NODE_SET_METHOD(exports, "quark", quark);
     NODE_SET_METHOD(exports, "x11", x11);
@@ -625,6 +669,8 @@ void init(Handle<Object> exports) {
     NODE_SET_METHOD(exports, "sha1", sha1);
     NODE_SET_METHOD(exports, "x15", x15);
     NODE_SET_METHOD(exports, "fresh", fresh);
+    NODE_SET_METHOD(exports, "lyra2re", lyra2re);
+    NODE_SET_METHOD(exports, "lyra2re2", lyra2re2);
 }
 
 NODE_MODULE(multihashing, init)
