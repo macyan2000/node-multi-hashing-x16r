@@ -12,6 +12,7 @@ extern "C" {
     #include "scryptn.h"
     #include "yescrypt/yescrypt.h"
     #include "yescrypt/sha256.h"
+　　#include "yescrypt/sha256_Y.h"
     #include "skein.h"
     #include "x11.h"
     #include "groestl.h"
