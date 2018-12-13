@@ -27,6 +27,7 @@ extern "C" {
     #include "nist5.h"
     #include "sha1.h"
     #include "x15.h"
+    #include "x16r.h"
     #include "fresh.h"
     #include "Lyra2RE.h"
 }
@@ -604,6 +605,28 @@ void x15(const FunctionCallbackInfo<Value>& args) {
     args.GetReturnValue().Set(buff);
 }
 
+void x16r(const FunctionCallbackInfo<Value>& args) {
+     Isolate* isolate = Isolate::GetCurrent();HandleScope scope(isolate);
+
+    if (args.Length() < 1)
+        return except("You must provide one argument.");
+
+    Local<Object> target = args[0]->ToObject();
+
+    if(!Buffer::HasInstance(target))
+        return except("Argument should be a buffer object.");
+
+    char * input = Buffer::Data(target);
+    char* output = new char[32];
+
+    uint32_t input_len = Buffer::Length(target);
+
+    x16r_hash(input, output, input_len);
+
+    Local<Object> buff = Nan::NewBuffer(output, 32).ToLocalChecked();
+    args.GetReturnValue().Set(buff);
+}
+
 void fresh(const FunctionCallbackInfo<Value>& args) {
      Isolate* isolate = Isolate::GetCurrent();HandleScope scope(isolate);
 
@@ -694,6 +717,7 @@ void init(Handle<Object> exports) {
     NODE_SET_METHOD(exports, "nist5", nist5);
     NODE_SET_METHOD(exports, "sha1", sha1);
     NODE_SET_METHOD(exports, "x15", x15);
+    NODE_SET_METHOD(exports, "x16r", x16r);
     NODE_SET_METHOD(exports, "fresh", fresh);
     NODE_SET_METHOD(exports, "lyra2re", lyra2re);
     NODE_SET_METHOD(exports, "lyra2re2", lyra2re2);
